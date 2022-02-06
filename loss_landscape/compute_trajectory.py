@@ -15,24 +15,8 @@ from utils.nn_manipulation import count_params, flatten_params
 from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action='store_true')
-    parser.add_argument("--seed", required=False, type=int, default=0)
-    parser.add_argument("--result_folder", "-r", required=True)
 
-    # model related arguments
-    parser.add_argument("--statefile_folder", "-s", required=True)
-    parser.add_argument(
-        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
-    )
-    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
-    parser.add_argument("--skip_bn_bias", action="store_true")
-
-    parser.add_argument("--direction_file", required=True)
-    parser.add_argument("--projection_file", required=True)
-
-    args = parser.parse_args()
+def compute_trajectory(args):
 
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
@@ -104,3 +88,25 @@ if __name__ == '__main__':
 
     logger.info(f"xrange: {xcoords.min()}, {xcoords.max()}")
     logger.info(f"yrange: {ycoords.min()}, {ycoords.max()}")
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-D", "--debug", action='store_true')
+    parser.add_argument("--seed", required=False, type=int, default=0)
+    parser.add_argument("--result_folder", "-r", required=True)
+
+    # model related arguments
+    parser.add_argument("--statefile_folder", "-s", required=True)
+    parser.add_argument(
+        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+    )
+    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
+    parser.add_argument("--skip_bn_bias", action="store_true")
+
+    parser.add_argument("--direction_file", required=True)
+    parser.add_argument("--projection_file", required=True)
+
+    args = parser.parse_args()
+    compute_trajectory(args)
+

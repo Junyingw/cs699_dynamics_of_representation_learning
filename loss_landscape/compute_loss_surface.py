@@ -18,36 +18,8 @@ from utils.nn_manipulation import count_params, flatten_params, set_weights_by_d
 from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action='store_true')
-    parser.add_argument("--seed", required=False, type=int, default=0)
-    parser.add_argument(
-        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
-    )
-    parser.add_argument("--result_folder", "-r", required=True)
-    parser.add_argument("--statefile", "-s", required=False, default=None)
-    parser.add_argument(
-        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
-    )
-    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
-    parser.add_argument("--skip_bn_bias", action="store_true")
+def compute_loss_surface(args):
 
-    parser.add_argument("--batch_size", required=False, type=int, default=1000)
-    parser.add_argument("--direction_file", required=True, type=str)
-    parser.add_argument(
-        "--surface_file", type=str, required=True, help="filename to store evaluation results"
-    )
-    parser.add_argument(
-        "--xcoords", type=str, default="51:-1:1",
-        help="range of x-coordinate, specify as num:min:max"
-    )
-    parser.add_argument(
-        "--ycoords", type=str, default="51:-1:1",
-        help="range of y-coordinate, specify as num:min:max"
-    )
-
-    args = parser.parse_args()
 
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
@@ -123,3 +95,35 @@ if __name__ == '__main__':
         f"{args.result_folder}/{args.surface_file}", losses=losses, accuracies=accuracies,
         xcoordinates=xcoordinates, ycoordinates=ycoordinates
     )
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-D", "--debug", action='store_true')
+    parser.add_argument("--seed", required=False, type=int, default=0)
+    parser.add_argument(
+        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
+    parser.add_argument("--result_folder", "-r", required=True)
+    parser.add_argument("--statefile", "-s", required=False, default=None)
+    parser.add_argument(
+        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+    )
+    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
+    parser.add_argument("--skip_bn_bias", action="store_true")
+
+    parser.add_argument("--batch_size", required=False, type=int, default=1000)
+    parser.add_argument("--direction_file", required=True, type=str)
+    parser.add_argument(
+        "--surface_file", type=str, required=True, help="filename to store evaluation results"
+    )
+    parser.add_argument(
+        "--xcoords", type=str, default="51:-1:1",
+        help="range of x-coordinate, specify as num:min:max"
+    )
+    parser.add_argument(
+        "--ycoords", type=str, default="51:-1:1",
+        help="range of y-coordinate, specify as num:min:max"
+    )
+
+    args = parser.parse_args()
+    compute_loss_surface(args) 

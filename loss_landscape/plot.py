@@ -7,16 +7,7 @@ import os
 import numpy
 from matplotlib import pyplot
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action='store_true')
-    parser.add_argument("--result_folder", "-r", required=True)
-    parser.add_argument("--trajectory_file", required=False, default=None)
-    parser.add_argument("--surface_file", required=False, default=None)
-    parser.add_argument("--plot_prefix", required=True, help="prefix for the figure names")
-
-    args = parser.parse_args()
-
+def plot(args):
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -94,3 +85,16 @@ if __name__ == '__main__':
             bbox_inches='tight'
         )
         pyplot.close()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-D", "--debug", action='store_true')
+    parser.add_argument("--result_folder", "-r", required=True)
+    parser.add_argument("--trajectory_file", required=False, default=None)
+    parser.add_argument("--surface_file", required=False, default=None)
+    parser.add_argument("--plot_prefix", required=True, help="prefix for the figure names")
+
+    args = parser.parse_args()
+
+    plot(args) 
+

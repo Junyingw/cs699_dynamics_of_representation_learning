@@ -17,41 +17,8 @@ from utils.nn_manipulation import count_params, create_normalized_random_directi
 from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action='store_true')
-    parser.add_argument("--seed", required=False, type=int, default=0)
-    parser.add_argument(
-        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
-    )
-    parser.add_argument("--result_folder", "-r", required=True)
 
-    # model related arguments
-    parser.add_argument(
-        "--statefile", "-s", required=False, default=None,
-        help="required to compute random directions"
-    )
-    parser.add_argument(
-        "--statefile_folder", required=False, default=None,
-        help="required for computing PCA directions"
-    )
-    parser.add_argument("--skip_bn_bias", action="store_true")
-    parser.add_argument(
-        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
-    )
-    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
-
-    parser.add_argument("--batch_size", required=False, type=int, default=128)
-    parser.add_argument(
-        "--direction_file", required=True, type=str, help="file name to store directions"
-    )
-    parser.add_argument(
-        "--direction_style", required=True, type=str,
-        choices=["random", "pca", "frequent_directions"]
-    )
-
-    args = parser.parse_args()
-
+def createe_direction(args):
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -118,3 +85,39 @@ if __name__ == '__main__':
 
     if args.direction_style == "frequent_directions":
         logger.info("See train.py to generate this")
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-D", "--debug", action='store_true')
+    parser.add_argument("--seed", required=False, type=int, default=0)
+    parser.add_argument(
+        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
+    parser.add_argument("--result_folder", "-r", required=True)
+
+    # model related arguments
+    parser.add_argument(
+        "--statefile", "-s", required=False, default=None,
+        help="required to compute random directions"
+    )
+    parser.add_argument(
+        "--statefile_folder", required=False, default=None,
+        help="required for computing PCA directions"
+    )
+    parser.add_argument("--skip_bn_bias", action="store_true")
+    parser.add_argument(
+        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+    )
+    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
+
+    parser.add_argument("--batch_size", required=False, type=int, default=128)
+    parser.add_argument(
+        "--direction_file", required=True, type=str, help="file name to store directions"
+    )
+    parser.add_argument(
+        "--direction_style", required=True, type=str,
+        choices=["random", "pca", "frequent_directions"]
+    )
+
+    args = parser.parse_args()
+    createe_direction(args) 
