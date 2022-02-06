@@ -86,7 +86,8 @@ def plot(args):
         )
         pyplot.close()
 
-if __name__ == '__main__':
+def get_plot_args(target_input=None):
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action='store_true')
     parser.add_argument("--result_folder", "-r", required=True)
@@ -94,7 +95,14 @@ if __name__ == '__main__':
     parser.add_argument("--surface_file", required=False, default=None)
     parser.add_argument("--plot_prefix", required=True, help="prefix for the figure names")
 
-    args = parser.parse_args()
+    if target_input is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(target_input)
 
+    return args 
+
+if __name__ == '__main__':
+    args = get_plot_args()
     plot(args) 
 

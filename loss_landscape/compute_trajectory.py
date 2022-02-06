@@ -17,7 +17,6 @@ from utils.resnet import get_resnet
 
 
 def compute_trajectory(args):
-
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -89,9 +88,10 @@ def compute_trajectory(args):
     logger.info(f"xrange: {xcoords.min()}, {xcoords.max()}")
     logger.info(f"yrange: {ycoords.min()}, {ycoords.max()}")
 
+    return xcoords, ycoords
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+def get_compute_trajectory_args(target_input=None):
+        parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action='store_true')
     parser.add_argument("--seed", required=False, type=int, default=0)
     parser.add_argument("--result_folder", "-r", required=True)
@@ -107,6 +107,14 @@ if __name__ == '__main__':
     parser.add_argument("--direction_file", required=True)
     parser.add_argument("--projection_file", required=True)
 
-    args = parser.parse_args()
+    if target_input is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(target_input)
+
+    return args 
+
+if __name__ == '__main__':
+    args = get_compute_trajectory_args()
     compute_trajectory(args)
 

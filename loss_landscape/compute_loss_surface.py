@@ -19,8 +19,6 @@ from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
 def compute_loss_surface(args):
-
-
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -96,7 +94,7 @@ def compute_loss_surface(args):
         xcoordinates=xcoordinates, ycoordinates=ycoordinates
     )
 
-if __name__ == '__main__':
+def get_compute_loss_surface_args(target_input=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action='store_true')
     parser.add_argument("--seed", required=False, type=int, default=0)
@@ -125,5 +123,13 @@ if __name__ == '__main__':
         help="range of y-coordinate, specify as num:min:max"
     )
 
-    args = parser.parse_args()
+    if target_input is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(target_input)
+
+    return args 
+
+if __name__ == '__main__':
+    args = get_compute_loss_surface_args()
     compute_loss_surface(args) 

@@ -18,7 +18,7 @@ from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
 
-def createe_direction(args):
+def create_direction(args):
     # set up logging
     os.makedirs(f"{args.result_folder}", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -42,7 +42,7 @@ def createe_direction(args):
 
         # we need to load actual weights to get the magnitudes for normalization
         logger.info(f"Loading model from {args.statefile}")
-        state_dict = torch.load(args.statefile, pickle_module=dill, map_location=args.device)
+        state_dict = torch.load(args.statefile, pickle_module=dill, map_location={'0':args.device})
         model.load_state_dict(state_dict)
 
         # create "filter" normalized random direction if nothing is passed
@@ -86,8 +86,9 @@ def createe_direction(args):
     if args.direction_style == "frequent_directions":
         logger.info("See train.py to generate this")
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+
+def get_create_direction_args(target_input=None):
+        parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action='store_true')
     parser.add_argument("--seed", required=False, type=int, default=0)
     parser.add_argument(
@@ -119,5 +120,14 @@ if __name__ == '__main__':
         choices=["random", "pca", "frequent_directions"]
     )
 
-    args = parser.parse_args()
-    createe_direction(args) 
+    if target_input is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(target_input)
+
+    return args 
+
+
+if __name__ == '__main__':
+    args = get_create_direction_args() 
+    create_direction(args) 

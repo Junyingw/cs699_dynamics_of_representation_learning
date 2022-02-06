@@ -29,13 +29,13 @@ from utils.reproducibility import set_seed
 from utils.resnet import get_resnet
 
 # "Fixed" hyperparameters
-NUM_EPOCHS = 200
+NUM_EPOCHS = 150
 # In the resnet paper they train for ~90 epoch before reducing LR, then 45 and 45 epochs.
 # We use 100-50-50 schedule here.
 LR = 0.1
 DATA_FOLDER = "../data/"
 
-def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_data=True, num_workers=8):
+def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_data=True, num_workers=4):
     """
         returns: cifar dataloader
 
@@ -222,8 +222,7 @@ def train(args):
         buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
     )
 
-
-if __name__ == "__main__":
+def get_train_args(target_input=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action='store_true')
     parser.add_argument("--seed", required=False, type=int, default=0)
@@ -252,7 +251,15 @@ if __name__ == "__main__":
         default=["epoch", "init"]
     )
 
-    args = parser.parse_args()
+    if target_input is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(target_input)
+
+    return args 
+
+if __name__ == "__main__":
+    args = get_train_args()
     train(args) 
 
 
