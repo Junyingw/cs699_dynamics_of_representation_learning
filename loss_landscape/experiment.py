@@ -86,8 +86,8 @@ def launch_experiment(args):
 	compute_trajectory_args = get_compute_trajectory_args(compute_trajectory_input)
 	xcoords,ycoords = compute_trajectory(compute_trajectory_args) 
 	
-	compute_loss_surface_input = compute_loss_surface_input + ["--xcoords","51:%d:%d"%(ceil(xcoords[0]),floor(xcoords[1]))]
-	compute_loss_surface_input = compute_loss_surface_input + ["--ycoords","51:%d:%d"%(ceil(ycoords[0]),floor(ycoords[1]))]
+	compute_loss_surface_input = compute_loss_surface_input + ["--xcoords","51:%.3lf:%.3lf"%(xcoords[0],xcoords[1])]
+	compute_loss_surface_input = compute_loss_surface_input + ["--ycoords","51:%.3lf:%.3lf"%(ycoords[0],ycoords[1])]
 
 	compute_loss_surface_args = get_compute_loss_surface_args(compute_loss_surface_input)
 	compute_loss_surface(compute_loss_surface_args) 
