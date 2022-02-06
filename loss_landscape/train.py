@@ -113,11 +113,13 @@ def train(args):
 
 	# we can try computing principal directions from some specific training rounds only
 	total_params = count_params(model, skip_bn_bias=args.skip_bn_bias)
-	fd = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
-	# frequent direction for last 10 epoch
-	fd_last_10 = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
-	# frequent direction for last 1 epoch
-	fd_last_1 = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
+	
+	if args.require_fd: 
+		fd = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
+		# frequent direction for last 10 epoch
+		fd_last_10 = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
+		# frequent direction for last 1 epoch
+		fd_last_1 = FrequentDirectionAccountant(k=2, l=10, n=total_params, device=args.device)
 
 	# use the same setup as He et al., 2015 (resnet)
 	optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=0.9, weight_decay=1e-4)
@@ -152,17 +154,18 @@ def train(args):
 
 			# get gradient and send it to the accountant
 			start = time.time()
-			fd.update(flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias))
-			direction_time += time.time() - start
+			if args.require_fd:
+				fd.update(flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias))
+				direction_time += time.time() - start
 
-			if epoch >= NUM_EPOCHS - 10:
-				fd_last_10.update(
-					flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias)
-				)
-			if epoch >= NUM_EPOCHS - 1:
-				fd_last_1.update(
-					flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias)
-				)
+				if epoch >= NUM_EPOCHS - 10:
+					fd_last_10.update(
+						flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias)
+					)
+				if epoch >= NUM_EPOCHS - 1:
+					fd_last_1.update(
+						flatten_grads(model, total_params, skip_bn_bias=args.skip_bn_bias)
+					)
 
 			summary_writer.add_scalar("train/loss", loss.item(), step)
 			step += 1
@@ -188,39 +191,40 @@ def train(args):
 
 	logger.info(f"Time to computer frequent directions {direction_time} s")
 
-	logger.info(f"fd was updated for {fd.step} steps")
-	logger.info(f"fd_last_10 was updated for {fd_last_10.step} steps")
-	logger.info(f"fd_last_1 was updated for {fd_last_1.step} steps")
+	if args.require_fd:
+		logger.info(f"fd was updated for {fd.step} steps")
+		logger.info(f"fd_last_10 was updated for {fd_last_10.step} steps")
+		logger.info(f"fd_last_1 was updated for {fd_last_1.step} steps")
 
-	# save the frequent_direction buffers and principal directions
-	buffer = fd.get_current_buffer()
-	directions = fd.get_current_directions()
-	directions = directions.cpu().data.numpy()
+		# save the frequent_direction buffers and principal directions
+		buffer = fd.get_current_buffer()
+		directions = fd.get_current_directions()
+		directions = directions.cpu().data.numpy()
 
-	numpy.savez(
-		f"{args.result_folder}/buffer.npy",
-		buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
-	)
+		numpy.savez(
+			f"{args.result_folder}/buffer.npy",
+			buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
+		)
 
-	# save the frequent_direction buffer
-	buffer = fd_last_10.get_current_buffer()
-	directions = fd_last_10.get_current_directions()
-	directions = directions.cpu().data.numpy()
+		# save the frequent_direction buffer
+		buffer = fd_last_10.get_current_buffer()
+		directions = fd_last_10.get_current_directions()
+		directions = directions.cpu().data.numpy()
 
-	numpy.savez(
-		f"{args.result_folder}/buffer_last_10.npy",
-		buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
-	)
+		numpy.savez(
+			f"{args.result_folder}/buffer_last_10.npy",
+			buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
+		)
 
-	# save the frequent_direction buffer
-	buffer = fd_last_1.get_current_buffer()
-	directions = fd_last_1.get_current_directions()
-	directions = directions.cpu().data.numpy()
+		# save the frequent_direction buffer
+		buffer = fd_last_1.get_current_buffer()
+		directions = fd_last_1.get_current_directions()
+		directions = directions.cpu().data.numpy()
 
-	numpy.savez(
-		f"{args.result_folder}/buffer_last_1.npy",
-		buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
-	)
+		numpy.savez(
+			f"{args.result_folder}/buffer_last_1.npy",
+			buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
+		)
 
 def get_train_args(target_input=None):
 	parser = argparse.ArgumentParser()
@@ -248,6 +252,12 @@ def get_train_args(target_input=None):
 	parser.add_argument("--batch_size", required=False, type=int, default=128)
 	parser.add_argument(
 		"--save_strategy", required=False, nargs="+", choices=["epoch", "init"],
+		default=["epoch", "init"]
+	)
+	parser.add_argument("--require_fd", action="store_true", default=False)
+
+	parser.add_argument(
+		"--load_pretrained", required=False, nargs="+", choices=["epoch", "init"],
 		default=["epoch", "init"]
 	)
 
