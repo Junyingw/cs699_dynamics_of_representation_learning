@@ -35,8 +35,7 @@ NUM_EPOCHS = 200
 LR = 0.1
 DATA_FOLDER = "../data/"
 
-
-def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_data=True):
+def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_data=True, num_workers=8):
     """
         returns: cifar dataloader
 
@@ -77,47 +76,17 @@ def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_
 
     # Data loader
     train_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=0
+        dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
     )
 
     test_loader = torch.utils.data.DataLoader(
-        dataset=test_dataset, batch_size=batch_size, shuffle=False, num_workers=0
+        dataset=test_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True
     )
 
     return train_loader, test_loader
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action='store_true')
-    parser.add_argument("--seed", required=False, type=int, default=0)
-    parser.add_argument(
-        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
-    )
-    parser.add_argument("--result_folder", "-r", required=True)
-    parser.add_argument(
-        "--mode", required=False, nargs="+", choices=["test", "train"], default=["test", "train"]
-    )
-
-    # model related arguments
-    parser.add_argument("--statefile", "-s", required=False, default=None)
-    parser.add_argument(
-        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
-    )
-    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
-    parser.add_argument(
-        "--skip_bn_bias", action="store_true",
-        help="whether to skip considering bias and batch norm params or not, Li et al do not consider bias and batch norm params"
-    )
-
-    parser.add_argument("--batch_size", required=False, type=int, default=128)
-    parser.add_argument(
-        "--save_strategy", required=False, nargs="+", choices=["epoch", "init"],
-        default=["epoch", "init"]
-    )
-
-    args = parser.parse_args()
-
+# define the train functions for call 
+def train(args):
     # set up logging
     os.makedirs(f"{args.result_folder}/ckpt", exist_ok=True)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -252,3 +221,38 @@ if __name__ == "__main__":
         f"{args.result_folder}/buffer_last_1.npy",
         buffer=buffer.cpu().data.numpy(), direction1=directions[0], direction2=directions[1]
     )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-D", "--debug", action='store_true')
+    parser.add_argument("--seed", required=False, type=int, default=0)
+    parser.add_argument(
+        "--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
+    )
+    parser.add_argument("--result_folder", "-r", required=True)
+    parser.add_argument(
+        "--mode", required=False, nargs="+", choices=["test", "train"], default=["test", "train"]
+    )
+
+    # model related arguments
+    parser.add_argument("--statefile", "-s", required=False, default=None)
+    parser.add_argument(
+        "--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+    )
+    parser.add_argument("--remove_skip_connections", action="store_true", default=False)
+    parser.add_argument(
+        "--skip_bn_bias", action="store_true",
+        help="whether to skip considering bias and batch norm params or not, Li et al do not consider bias and batch norm params"
+    )
+
+    parser.add_argument("--batch_size", required=False, type=int, default=128)
+    parser.add_argument(
+        "--save_strategy", required=False, nargs="+", choices=["epoch", "init"],
+        default=["epoch", "init"]
+    )
+
+    args = parser.parse_args()
+    train(args) 
+
+
