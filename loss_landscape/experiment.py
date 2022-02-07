@@ -26,6 +26,11 @@ def launch_experiment(args):
 	compute_loss_surface_input = compute_loss_surface_input + ["--model", args.model]
 	plot_input = plot_input + ["--model", args.model]
 
+
+	# set up the augment 
+	if args.data_augment:
+		train_input = train_input + ["--data_augment"]
+
 	# set up the skip bn bias 
 	if args.skip_bn_bias:
 		train_input = train_input + ["--skip_bn_bias"]
