@@ -71,11 +71,11 @@ def launch_experiment(args):
 	compute_loss_surface_input = compute_loss_surface_input + ["--surface_file",surface_file]
 	compute_loss_surface_input = compute_loss_surface_input + ["-s",target_statefile_loc]
 	compute_loss_surface_input = compute_loss_surface_input + ["--direction_file", train_result_folder + direction_file]
-	compute_loss_surface_input = compute_loss_surface_input + ["--batch_size", "1000"]
+	compute_loss_surface_input = compute_loss_surface_input + ["--batch_size", "5000"]
 
-	plot_input = plot_input + ["--result_folder","figures/resnet20/"]
+	plot_input = plot_input + ["--result_folder", train_result_folder + "/figures/"]
 	plot_input = plot_input + ["--trajectory_file", trajectory_folder + projection_file]
-	plot_input = plot_input + ["--direction_file", surface_folder + surface_file]
+	plot_input = plot_input + ["--surface_file", surface_folder + surface_file]
 	plot_input = plot_input + ["--plot_prefix", "resnet20_pca_dir"]
 	
 	train_args = get_train_args(train_input)
@@ -111,6 +111,7 @@ def get_experiment_args():
 	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 	parser.add_argument("--exp_name", "-exp_name", required=True)
+	parser.add_argument("--data_augment", action="store_true", default=True) 
 	
 	return parser.parse_args()
 

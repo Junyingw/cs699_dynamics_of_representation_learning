@@ -35,7 +35,8 @@ NUM_EPOCHS = 125
 LR = 0.1
 DATA_FOLDER = "../data/"
 
-def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_data=True, num_workers=4):
+def get_dataloader(batch_size, train_size=None, test_size=None, 
+	transform_train_data=True, num_workers=2, extra_transform_train_data=False):
 	"""
 		returns: cifar dataloader
 
@@ -48,12 +49,23 @@ def get_dataloader(batch_size, train_size=None, test_size=None, transform_train_
 
 	normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
-	transform = transforms.Compose(
-		[
-			transforms.RandomHorizontalFlip(), transforms.RandomCrop(32, 4),
-			transforms.ToTensor(), normalize
-		]
-	) if transform_train_data else transforms.Compose([transforms.ToTensor(), normalize])
+	if extra_transform_train_data:
+		transform = transforms.Compose(
+			[
+				trnasforms.ColorJitter(brightness=.5, hue=.3)
+				transforms.GaussianBlur(kernel_size=(1, 3), sigma=(0.1, 5)), 
+				transforms.RandomHorizontalFlip(), transforms.RandomCrop(32, 4),
+				transforms.ToTensor(), normalize
+			]
+		) if transform_train_data else transforms.Compose([transforms.ToTensor(), normalize])
+	else:
+		transform = transforms.Compose(
+			[
+				transforms.RandomHorizontalFlip(), transforms.RandomCrop(32, 4),
+				transforms.ToTensor(), normalize
+			]
+		) if transform_train_data else transforms.Compose([transforms.ToTensor(), normalize])
+
 
 	test_transform = transforms.Compose([transforms.ToTensor(), normalize])
 
@@ -100,7 +112,7 @@ def train(args):
 	set_seed(args.seed)
 
 	# get dataset
-	train_loader, test_loader = get_dataloader(args.batch_size)
+	train_loader, test_loader = get_dataloader(args.batch_size, extra_transform_train_data=args.data_augment)
 
 	# get model
 	model = get_resnet(args.model)(
@@ -249,6 +261,7 @@ def get_train_args(target_input=None):
 		help="whether to skip considering bias and batch norm params or not, Li et al do not consider bias and batch norm params"
 	)
 
+	# train configuration 
 	parser.add_argument("--batch_size", required=False, type=int, default=128)
 	parser.add_argument(
 		"--save_strategy", required=False, nargs="+", choices=["epoch", "init"],
@@ -256,10 +269,11 @@ def get_train_args(target_input=None):
 	)
 	parser.add_argument("--require_fd", action="store_true", default=False)
 
-	parser.add_argument(
-		"--load_pretrained", required=False, nargs="+", choices=["epoch", "init"],
+	parser.add_argument("--load_pretrained", 
+		required=False, nargs="+", choices=["epoch", "init"],
 		default=["epoch", "init"]
 	)
+	parser.add_argument("--data_augment", action="store_true", default=False) 
 
 	if target_input is None:
 		args = parser.parse_args()

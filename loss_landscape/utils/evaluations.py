@@ -17,6 +17,7 @@ def get_loss_value(model, loader, device):
 
     return (loss, accuracy)
     """
+    torch.backends.cudnn.benchmark = True 
 
     model.eval()
     losses = []
