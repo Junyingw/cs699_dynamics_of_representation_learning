@@ -268,7 +268,6 @@ def get_train_args(target_input=None):
 		default=["epoch", "init"]
 	)
 	parser.add_argument("--require_fd", action="store_true", default=False)
-
 	parser.add_argument("--load_pretrained", 
 		required=False, nargs="+", choices=["epoch", "init"],
 		default=["epoch", "init"]
