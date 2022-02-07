@@ -6,7 +6,20 @@ heavily based on https://github.com/tomgoldstein/loss-landscape.
 - See `install.sh` or `requirements.txt` for required packages.
 - Tested with python3.8
 
-## How to use?
+## New Features (Feb 7th): Experiment Launcher and Data Augmentation 
+```
+example: python experiment.py \
+    --device cuda:0 \
+    --model "resnet20" \
+    --exp_name "resnet20_augment_remove_skip_connections" \
+    --remove_skip_connections 
+```
+- Updates:
+    - Add option `--data_augment` for extra data augmentations including ColorJitter and GaussianBlur (Default: RandomHorizontalFlip).
+    - Combine the procedures/steps of preivous shell into one unifed experiment launcher. 
+
+
+## How to use different components 
 
 - **Training the models**: Use `train.py` to train the model. Currently, you can
   train resnets on CIFAR 10. The usage is below.

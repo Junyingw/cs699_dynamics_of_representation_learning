@@ -86,6 +86,7 @@ def launch_experiment(args):
 	train_args = get_train_args(train_input)
 	train(train_args) 
 
+	create_direction_input = create_direction_input + ["--skip_bn_bias"]
 	create_direction_args = get_create_direction_args(create_direction_input) 
 	create_direction(create_direction_args)
 

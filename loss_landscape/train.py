@@ -257,7 +257,7 @@ def get_train_args(target_input=None):
 	)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 	parser.add_argument(
-		"--skip_bn_bias", action="store_true",
+		"--skip_bn_bias", action="store_true", default=False,
 		help="whether to skip considering bias and batch norm params or not, Li et al do not consider bias and batch norm params"
 	)
 

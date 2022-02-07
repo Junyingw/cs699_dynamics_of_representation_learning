@@ -105,7 +105,7 @@ def get_create_direction_args(target_input=None):
 		"--statefile_folder", required=False, default=None,
 		help="required for computing PCA directions"
 	)
-	parser.add_argument("--skip_bn_bias", action="store_true")
+	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument(
 		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
 	)
