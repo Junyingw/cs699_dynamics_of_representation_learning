@@ -74,8 +74,9 @@ def launch_experiment(args):
 	compute_loss_surface_input = compute_loss_surface_input + ["--batch_size", "1000"]
 
 	plot_input = plot_input + ["--result_folder","figures/resnet20/"]
-	plot_input = plot_input + ["--direction_file", trajectory_folder + projection_file]
+	plot_input = plot_input + ["--trajectory_file", trajectory_folder + projection_file]
 	plot_input = plot_input + ["--direction_file", surface_folder + surface_file]
+	plot_input = plot_input + ["--plot_prefix", "resnet20_pca_dir"]
 	
 	train_args = get_train_args(train_input)
 	train(train_args) 
@@ -83,9 +84,11 @@ def launch_experiment(args):
 	create_direction_args = get_create_direction_args(create_direction_input) 
 	create_direction(create_direction_args)
 
+	compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_trajectory_args = get_compute_trajectory_args(compute_trajectory_input)
 	xcoords,ycoords = compute_trajectory(compute_trajectory_args) 
 	
+	compute_loss_surface_input = compute_loss_surface_input + ["--skip_bn_bias"]
 	compute_loss_surface_input = compute_loss_surface_input + ["--xcoords","51:%.3lf:%.3lf"%(xcoords[0],xcoords[1])]
 	compute_loss_surface_input = compute_loss_surface_input + ["--ycoords","51:%.3lf:%.3lf"%(ycoords[0],ycoords[1])]
 
@@ -94,7 +97,6 @@ def launch_experiment(args):
 
 	plot_args = get_plot_args(plot_input) 
 	plot(plot_args)
-
 
 def get_experiment_args():
 	parser = argparse.ArgumentParser()
