@@ -94,8 +94,13 @@ def get_plot_args(target_input=None):
 	parser.add_argument("--surface_file", required=False, default=None)
 	parser.add_argument("--plot_prefix", required=True, help="prefix for the figure names")
 	parser.add_argument(
-		"--model", required=False, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+		"--model", required=False, choices=["resnet20", "resnet32", "resnet44", "resnet56",
+		"fixup_resnet20", "fixup_resnet32", "fixup_resnet44", "fixup_resnet56",
+		]
 	)
+	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
+	parser.add_argument("--skip_bn_bias", action="store_true",default=False)
+
 	
 	if target_input is None:
 		args = parser.parse_args()

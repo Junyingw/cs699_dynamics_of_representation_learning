@@ -107,7 +107,9 @@ def get_create_direction_args(target_input=None):
 	)
 	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument(
-		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56",
+		"fixup_resnet20", "fixup_resnet32", "fixup_resnet44", "fixup_resnet56",
+		]
 	)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 

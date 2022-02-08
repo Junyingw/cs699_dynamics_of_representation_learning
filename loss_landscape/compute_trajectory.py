@@ -99,10 +99,12 @@ def get_compute_trajectory_args(target_input=None):
 	# model related arguments
 	parser.add_argument("--statefile_folder", "-s", required=True)
 	parser.add_argument(
-		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56",
+		"fixup_resnet20", "fixup_resnet32", "fixup_resnet44", "fixup_resnet56",
+		]
 	)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
-	parser.add_argument("--skip_bn_bias", action="store_true")
+	parser.add_argument("--skip_bn_bias", action="store_true",default=False)
 
 	parser.add_argument("--direction_file", required=True)
 	parser.add_argument("--projection_file", required=True)
