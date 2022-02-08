@@ -34,7 +34,7 @@ def launch_experiment(args):
 		create_direction_input = create_direction_input + ["--skip_bn_bias"]
 		compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 		compute_loss_surface_input = compute_loss_surface_input + ["--skip_bn_bias"]
-		plot_input = plot_input + ["--skip_bn_bias"]
+		#plot_input = plot_input + ["--skip_bn_bias"]
 
 	# set up the remove skip connection flag 
 	if args.remove_skip_connections:
@@ -42,7 +42,7 @@ def launch_experiment(args):
 		create_direction_input = create_direction_input + ["--remove_skip_connections"]
 		compute_trajectory_input = compute_trajectory_input + ["--remove_skip_connections"]
 		compute_loss_surface_input = compute_loss_surface_input + ["--remove_skip_connections"]
-		plot_input = plot_input + ["--remove_skip_connections"]
+		#plot_input = plot_input + ["--remove_skip_connections"]
 
 	# set up the device info for train and compute_loss_suface 
 	train_input = train_input + ["--device", args.device]
