@@ -87,7 +87,8 @@ def launch_experiment(args):
 	#  	we argue that this change is necessary as the batch normalization parameters 
 	# 	are dependent with input features of training set and the weights of previous 
 	# 	layers.
-	create_direction_input = create_direction_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	create_direction_args = get_create_direction_args(create_direction_input) 
 	create_direction(create_direction_args)
 
@@ -95,11 +96,13 @@ def launch_experiment(args):
 	#  	we argue that this change is necessary as the batch normalization parameters 
 	# 	are dependent with input features of training set and the weights of previous 
 	# 	layers.
-	# usually we use compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_trajectory_args = get_compute_trajectory_args(compute_trajectory_input)
 	xcoords,ycoords = compute_trajectory(compute_trajectory_args) 
 	
-	compute_loss_surface_input = compute_loss_surface_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_loss_surface_input = compute_loss_surface_input + ["--xcoords","51:%.3lf:%.3lf"%(xcoords[0],xcoords[1])]
 	compute_loss_surface_input = compute_loss_surface_input + ["--ycoords","51:%.3lf:%.3lf"%(ycoords[0],ycoords[1])]
 
