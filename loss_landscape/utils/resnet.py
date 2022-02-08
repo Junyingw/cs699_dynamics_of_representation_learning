@@ -140,6 +140,11 @@ Fixed-ResNet implementation for CIFAR datasets
     Adopted from https://github.com/hongyi-zhang/Fixup/blob/master/cifar/models/fixup_resnet_cifar.py
 """
 
+def conv3x3(in_planes, out_planes, stride=1):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
+                     padding=1, bias=False)
+
 class FixupBasicBlock(nn.Module):
     expansion = 1
 
