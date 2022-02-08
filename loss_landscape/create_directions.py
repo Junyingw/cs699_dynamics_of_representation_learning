@@ -77,7 +77,7 @@ def create_direction(args):
 			i += 1
 		logger.info(f"Found {len(state_files)} models")
 
-		direction1, direction2, ex_var = get_PCA_directions(model, state_files, skip_bn_bias=True)
+		direction1, direction2, ex_var = get_PCA_directions(model, state_files, skip_bn_bias=args.skip_bn_bias)
 		numpy.savez(
 			f"{args.result_folder}/{args.direction_file}", explained_variance=ex_var,
 			direction2=direction2, direction1=direction1

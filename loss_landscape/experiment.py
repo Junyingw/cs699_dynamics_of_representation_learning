@@ -95,7 +95,7 @@ def launch_experiment(args):
 	#  	we argue that this change is necessary as the batch normalization parameters 
 	# 	are dependent with input features of training set and the weights of previous 
 	# 	layers.
-	compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
+	# usually we use compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_trajectory_args = get_compute_trajectory_args(compute_trajectory_input)
 	xcoords,ycoords = compute_trajectory(compute_trajectory_args) 
 	
