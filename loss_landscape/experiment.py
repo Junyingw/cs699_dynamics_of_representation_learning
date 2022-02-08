@@ -34,7 +34,7 @@ def launch_experiment(args):
 		create_direction_input = create_direction_input + ["--skip_bn_bias"]
 		compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 		compute_loss_surface_input = compute_loss_surface_input + ["--skip_bn_bias"]
-		plot_input = plot_input + ["--skip_bn_bias"]
+		#plot_input = plot_input + ["--skip_bn_bias"]
 
 	# set up the remove skip connection flag 
 	if args.remove_skip_connections:
@@ -42,7 +42,7 @@ def launch_experiment(args):
 		create_direction_input = create_direction_input + ["--remove_skip_connections"]
 		compute_trajectory_input = compute_trajectory_input + ["--remove_skip_connections"]
 		compute_loss_surface_input = compute_loss_surface_input + ["--remove_skip_connections"]
-		plot_input = plot_input + ["--remove_skip_connections"]
+		#plot_input = plot_input + ["--remove_skip_connections"]
 
 	# set up the device info for train and compute_loss_suface 
 	train_input = train_input + ["--device", args.device]
@@ -87,7 +87,8 @@ def launch_experiment(args):
 	#  	we argue that this change is necessary as the batch normalization parameters 
 	# 	are dependent with input features of training set and the weights of previous 
 	# 	layers.
-	create_direction_input = create_direction_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	create_direction_args = get_create_direction_args(create_direction_input) 
 	create_direction(create_direction_args)
 
@@ -95,11 +96,13 @@ def launch_experiment(args):
 	#  	we argue that this change is necessary as the batch normalization parameters 
 	# 	are dependent with input features of training set and the weights of previous 
 	# 	layers.
-	compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_trajectory_args = get_compute_trajectory_args(compute_trajectory_input)
 	xcoords,ycoords = compute_trajectory(compute_trajectory_args) 
 	
-	compute_loss_surface_input = compute_loss_surface_input + ["--skip_bn_bias"]
+	# usually we forcefully use the following options:
+	#	 compute_trajectory_input = compute_trajectory_input + ["--skip_bn_bias"]
 	compute_loss_surface_input = compute_loss_surface_input + ["--xcoords","51:%.3lf:%.3lf"%(xcoords[0],xcoords[1])]
 	compute_loss_surface_input = compute_loss_surface_input + ["--ycoords","51:%.3lf:%.3lf"%(ycoords[0],ycoords[1])]
 
@@ -117,12 +120,14 @@ def get_experiment_args():
 		"--device", required=False, default="cuda" if torch.cuda.is_available() else "cpu"
 	)
 	parser.add_argument(
-		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56",
+		"fixup_resnet20", "fixup_resnet32", "fixup_resnet44", "fixup_resnet56",
+		]
 	)
 	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 	parser.add_argument("--exp_name", "-exp_name", required=True)
-	parser.add_argument("--data_augment", action="store_true", default=True) 
+	parser.add_argument("--data_augment", action="store_true", default=False) 
 	
 	return parser.parse_args()
 

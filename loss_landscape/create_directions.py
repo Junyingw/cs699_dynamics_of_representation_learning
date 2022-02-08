@@ -77,7 +77,7 @@ def create_direction(args):
 			i += 1
 		logger.info(f"Found {len(state_files)} models")
 
-		direction1, direction2, ex_var = get_PCA_directions(model, state_files, skip_bn_bias=True)
+		direction1, direction2, ex_var = get_PCA_directions(model, state_files, skip_bn_bias=args.skip_bn_bias)
 		numpy.savez(
 			f"{args.result_folder}/{args.direction_file}", explained_variance=ex_var,
 			direction2=direction2, direction1=direction1
@@ -107,7 +107,9 @@ def get_create_direction_args(target_input=None):
 	)
 	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument(
-		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56"]
+		"--model", required=True, choices=["resnet20", "resnet32", "resnet44", "resnet56",
+		"fixup_resnet20", "fixup_resnet32", "fixup_resnet44", "fixup_resnet56",
+		]
 	)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 
