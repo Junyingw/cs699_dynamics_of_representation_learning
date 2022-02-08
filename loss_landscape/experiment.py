@@ -127,7 +127,7 @@ def get_experiment_args():
 	parser.add_argument("--skip_bn_bias", action="store_true", default=False)
 	parser.add_argument("--remove_skip_connections", action="store_true", default=False)
 	parser.add_argument("--exp_name", "-exp_name", required=True)
-	parser.add_argument("--data_augment", action="store_true", default=True) 
+	parser.add_argument("--data_augment", action="store_true", default=False) 
 	
 	return parser.parse_args()
 
