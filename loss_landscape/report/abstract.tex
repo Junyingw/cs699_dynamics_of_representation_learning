@@ -1,0 +1,19 @@
+%!TEX root=main.tex
+
+%Neural network training relies on our ability to find “good” minimizers of highly non-convex loss functions. 
+%It is well-known that certain network architecture designs (e.g., skip connections) produce loss functions that train easier, and wellchosen training parameters (batch size, learning rate, optimizer) produce minimizers that generalize better. 
+%However, the reasons for these differences, and their effects on the underlying loss landscape, are not well understood. 
+%In this paper, we explore the structure of neural loss functions, and the effect of loss landscapes on generalization, using a range of visualization methods. 
+%First, we introduce a simple “filter normalization” method that helps us visualize loss function curvature and make meaningful side-by-side comparisons between loss functions. 
+%Then, using a variety of visualizations, we explore how network architecture affects the loss landscape, and how training parameters affect the shape of minimizers.
+
+
+Over the past ten years, deep neural networks have achieved tremendous successes over the traditional models in various research areas.  
+However, unlike those classic models, deep neural networks heavily relies on the optimization procedure over highly non-convex loss functions, which remains an open question in theory, but can be rather simple in practice with gradient-based methods.  
+Perhaps surprisingly, those methods are shown to find global minimizers of non-convex loss functions even with randomized features and labels. 
+However, this property does not hold universally, therefore, the training process heavily relies on handcrafted and carefully-selected designs with respect to different tasks. 
+As mentioned in \cite{li2018visualizing}, it is important to understand how these designs affect the loss landscape and thus improve (or worsen) the trainability. 
+To this end, with the help the visualization methods of loss landscape,  we take a closer look into the effects of several popular network architecture and training designs with ResNet-s and CIFAR-10 in this project.  
+First, .
+Then, .
+Finally, .

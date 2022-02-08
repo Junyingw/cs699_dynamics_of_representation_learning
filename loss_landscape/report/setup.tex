@@ -1,0 +1,24 @@
+%!TEX root=main.tex
+\section{Setup}
+\label{sec:setup}
+
+\textbf{Task.} 
+To be consistent with previous work of \cite{li2018visualizing}, all the experiments of this project are conducted with CIFAR-10 dataset.   
+
+\textbf{Neural network backbone.} 
+Due to the limit of computation resource, we use ResNet-20, the smallest network architecture of ResNets on CIFAR-10,  as the backbone to conduct experiment results. 
+For implementation details and pretrained models, we refer the readers to the github repository of \cite{Idelbayev18a} which provides a valid pytorch implementation of ResNet-s for CIFAR-10 as described in \cite{he2016deep}.
+
+
+\textbf{Number of training epochs.} 
+In the original implementation, the network is trained for $200$ epochs in total, where the first $100$ epochs starts with large learning rate and the later epochs use much smaller learning rates. 
+Therefore, the network weights at the end of first $100$ epochs are very close to the final ones after $200$ epochs. 
+With this observation, we only train for $120$ epochs in our experiment and visualize the loss landscape around the parameters achieved. 
+
+\textbf{Data augmentation.} 
+We noticed that the original implementation already uses the \textit{RandomHorizontalFlip} and \textit{RandomCrop} for data augmentation. 
+To understand the effect of various data augmentation methods, we select two other transforms \textit{GaussianBlur} and \textit{ColorJitter} with fixed hyper parameters. 
+The details are deferred to \pref{sec:data_augment}. 
+
+\textbf{Directions for projection.}
+Similar to \cite{li2018visualizing}, we uses PCA of model checkpoint differences for the directions to project the high-dimensional loss surface into a 2-D loss landscape. 

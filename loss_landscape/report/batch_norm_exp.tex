@@ -1,0 +1,10 @@
+%!TEX root=main.tex
+\subsection{Batch Normalization}
+\label{sec:batch_norm}
+
+As discussed in \cite{li2018visualizing} and later in \cite{zhang2018fixup}, the batch normalization layers are not only important for the neural networks to ensure stable results, but also have significant effects to the loss surface. 
+To compare with ResNet-20 which uses batch normalization layers, we adopt the fixup resnet architecture of \cite{zhang2018fixup} which can achieve similar performance without using BN layers. 
+However, during the training procedure of fixup resnet, some weights were updated to infinity and corrupted the whole network. 
+We are only able to get the first $70$ epoch to visualize the loss landscape with accuracy at rough $85\%$. 
+
+
