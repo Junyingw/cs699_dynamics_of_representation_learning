@@ -1,0 +1,146 @@
+%!TEX root=main.tex
+\section{Main Algorithms and Results}\label{sec:algorithms}
+
+
+
+
+We are now ready to introduce our main algorithms and results for the unknown transition case, with either full-information or bandit feedback.
+The complete pseudocode is shown in \pref{alg:bobw_framework},
+which is built with two main components: a new framework to deal with unknown transitions and adversarial losses (important for incorporating our loss-shifting technique), and special regularizers for \ftrl.
+We explain these two components in detail below.
+
+\paragraph{A new framework for unknown transitions and adversarial losses}
+When the transition is unknown, a common practice (which we also follow) is to maintain an empirical transition along with a shrinking confidence set of the true transition, usually updated in some doubling epoch schedule.
+More specifically, a new epoch is started whenever the total number of visits to some state-action pair is doubled (compared to the beginning of this epoch), thus resulting in at most $\order\rbr{|S||A|\log T}$ epochs.
+We denote by $i(t)$ the epoch index to which episode $t$ belongs. 
+At the beginning of each epoch $i$, we calculate the empirical transition $\bar{P}_i$ (fixed through this epoch) as: 
+\begin{equation}
+\label{eq:empirical_mean_transition_def} 
+\bar{P}_i(s'|s,a) = \frac{ m_i(s,a,s')  }{m_i(s,a)}, \quad \forall (s,a,s') \in S_k \times A \times S_{k+1}, \; k = 0,\ldots L-1, 
+\end{equation}
+where $m_i(s,a)$ and $m_i(s,a,s')$ are the total number of received visits to $(s,a)$ and $(s,a,s')$ accordingly prior to epoch $i$. 
+{\color{magenta}
+In other words, $m_i(s,a)$ is formally defined as 
+\[
+m_i(s,a) = \sum_{t=1}^{t_i - 1} \Indt{s,a} \cdot \ind_t^s  
+\]
+where $t_i$ is the epoch starting time, $\ind_t^s = \Ind{ t + d^t < s  }$ is the indicator of whether the tuple $(t, U_t, \{\ell_t(s_t^k, a_t^k)\}_{k<L})$ is revealed to learner prior to episode $s$.  We define  $m_i(s,a,s')$ similarly. 
+
+On the other hand, we denote by $n_i(s,a)$ and $n_i(s,a,s')$ the underlying total number of visits to $(s,a)$ and $(s,a,s')$ prior to epoch $i$, that is, 
+\[
+n_i(s,a) = \sum_{t=1}^{t_i - 1} \Indt{s,a}, \quad n_i(s,a,s') = \sum_{t=1}^{t_i - 1} \Indt{s,a,s'}. 
+\]
+} 
+
+\footnote{When $m_i(s,a) = 0$, we simply let $\bar{P}_i(\cdot|s,a)$ be an arbitrary distribution.}
+The confidence set of the true transition for this epoch is then defined as
+\begin{equation*}
+%\label{eq:confidence_set_def}
+\calP_i = \cbr{ \widehat{P}: \abr{ \widehat{P}(s'|s,a) - \bar{P}_i(s'|s,a) } \leq B_i(s,a,s'), \; \forall (s,a,s')\in S_k \times A \times S_{k+1}, k < L },
+\end{equation*} 
+where $B_i$ is Bernstein-style confidence width (taken from~\cite{jin2019learning}):
+\begin{equation}
+\label{eq:confidence_width_def} 
+B_i(s,a,s') = \min\cbr{  2 \sqrt{\frac{\bar{P}_i(s'|s,a)\ln \rbr{\frac{T|S||A|}{\delta}}}{m_{i}(s,a)}} + \frac{14\ln\rbr{\frac{T|S||A|}{\delta}}}{3m_{i}(s,a)}, \; 1}
+\end{equation}
+for some confidence parameter $\delta \in (0,1)$.
+As~\citep[Lemma~2]{jin2019learning} shows, the true transition $P$ is contained in the confidence set $\calP_i$ for all epoch $i$ with probably at least $1-4\delta$.
+
+When dealing with adversarial losses, prior works~\citep{rosenberg19a, rosenberg2019online, jin2019learning, lee2020bias} perform \ftrl (or a similar algorithm called Online Mirror Descent) over the set of all plausible occupancy measures $\Omega(\calP_i) = \{q \in \Omega(\widehat{P}): \widehat{P} \in \calP_i\}$ during epoch $i$, which can be seen as a form of optimism and encourages exploration.
+%This framework, however, does not allow us to apply the loss-shifting trick discussed in \pref{sec:loss_shifting} --- indeed, our key shifting function \pref{eq:loss_shift_function} is defined in terms of some fixed transition $\bar{P}$, and the required invariant condition on $\inner{q, g_\tau}$ only holds for $q \in \Omega(\bar{P})$ but not $q \in \Omega(\calP_i)$.
+
+Inspired by this observation, we propose the following new approach.
+First, to directly fix the issue mentioned above, for each epoch $i$, we run a new instance of \ftrl simply over $\Omega(\bar{P}_i)$.
+%This is implemented by keeping track of the epoch starting time $t_i$ and only using the cumulative loss $\sum_{\tau=t_i}^{t-1}\hatl_\tau$ in the \ftrl update (\pref{eq:epoch_FTRL}).
+Therefore, in each epoch, we are pretending to deal with a known transition problem. %making the same loss-shifting technique discussed in \pref{sec:loss_shifting} applicable.
+
+However, this removes the critical optimism in the algorithm and does not admit enough exploration.
+To fix this, our second modification is to feed \ftrl with optimistic losses constructed by adding some (negative) bonus term, an idea often used in the stochastic setting.
+More specifically, we subtract $L \cdot B_i(s,a)$ from the loss for each $(s,a)$ pair, where $B_i(s,a) = \min\big\{1, \sum_{s' \in S_{k(s)+1}} B_i(s,a,s')\big\}$; see \pref{eq:adjusted_loss}.
+In the bandit setting, note that the importance-weighted estimator is no longer applicable since the transition is unknown (making $q_t$ also unknown), and~\citep{jin2019learning} proposes to use $\frac{\ell_t(s,a) \cdot \Indt{s,a}}{u_t(s,a)}$ instead, where $\Indt{s,a}$ is again the indicator of whether $(s,a)$ is visited during episode $t$, and $u_t(s,a)$ is the so-called upper occupancy measure defined as
+\begin{equation}\label{eq:UOB}
+u_t(s,a) = \max_{\widehat{P} \in \calP_{i(t)}} q^{\widehat{P}, \pi_t}(s,a)
+\end{equation}
+and can be efficiently computed via the \textsc{Comp-UOB} procedure of~\citep{jin2019learning}.
+Our final adjusted loss estimator is then $\hatl_t(s,a) = \frac{\ell_t(s,a) \cdot \Indt{s,a} }{u_t(s,a)}   - L \cdot B_{i}(s,a)$.
+In our analysis, we show that these adjusted loss estimators indeed make sure that we only underestimate the loss of each policy, which encourages exploration.
+
+{\color{magenta}
+With delayed feedback, the loss function $\hatl_t$ is not revealed to the learner immediately but at the end of episode $t+d^t$. To this end, we denote the loss estimator  as 
+\begin{align*}
+\hatl_t^h(s,a) =   \frac{\ell_t(s,a) \cdot \Indt{s,a} \cdot \ind_t^h }{u_t(s,a)}   - L \cdot B_{i}(s,a)
+\end{align*}
+as the loss estimator of $\ell_t$ at episode $h$. 
+}
+
+With this new framework, it is not difficult to show $\sqrt{T}$-regret in the adversarial world using many standard choices of the regularizer $\phi_t$ (which recovers the results of~\citep{rosenberg19a, jin2019learning} with a different approach).
+To further ensure polylogarithmic regret in the stochastic world, however, we need some carefully designed regularizers discussed next.
+
+\DontPrintSemicolon 
+\setcounter{AlgoLine}{0}
+\begin{savenotes}
+\begin{algorithm}[t]
+	\caption{Best-of-both-worlds for Episodic MDPs with Unknown Transition}
+	\label{alg:bobw_framework}
+	
+	\textbf{Input:} confidence parameter $\delta$.
+	
+	\textbf{Initialize:} epoch index $i=1$ and epoch starting time $t_i = 1$.
+	
+	\textbf{Initialize:} $\forall (s,a,s')$, set counters $m_1(s,a) = m_1(s,a,s') = m_0(s,a) = m_0(s,a,s') = 0$.
+	
+	\textbf{Initialize:} empirical transition $\bar{P}_1$ and confidence width $B_1$ based on \pref{eq:empirical_mean_transition_def} and \pref{eq:confidence_width_def}. 
+		
+	\For{$t=1,\ldots,T$}{
+		{\color{magenta}
+		Let $\phi_t$ be \pref{eq:Tsallis} for bandit feedback, and compute
+	   \begin{equation}\label{eq:epoch_FTRL}
+	    \widehat{q}_t = \argmin_{q\in \Omega\rbr{\bar{P}_i}}  \inner{q,  \sum_{\tau=t_i}^{t-1}\hatl_\tau^t} + \phi_t(q), 
+	    \end{equation}
+	    with adjusted loss estimator $\hatl_\tau^t$ definfed as
+	    \begin{equation}\label{eq:adjusted_loss}
+	    \hatl_\tau^t(s,a) = \frac{\ell_\tau(s,a) \cdot \ind_\tau(s,a)\cdot \ind_\tau^t  }{u_\tau(s,a)}  - L \cdot B_{i}(s,a), 
+	    \end{equation}
+	    where $B_i(s,a) = \min\big\{1, \sum_{s' \in S_{k(s)+1}} B_i(s,a,s')\big\}$, $\Indt{s,a} = \Ind{\exists k, (s,a)=(s_k^{t}, a_k^{t})}$, 
+	    and $u_t$ is the upper occupancy measure defined in \pref{eq:UOB}.}
+         
+         
+		Compute policy $\pi_t$ from $\widehat{q}_t$ such that
+		$\pi_t(a|s) \propto \widehat{q}_t(s,a)$.\footnote{If $\sum_{b\in A} \widehat{q}_t(s,b)=0$, we let $\pi_t$ to be the uniform distribution.}
+		
+		Execute policy $\pi_t$ and obtain trajectory $(s_k^{t}, a_k^{t})$ for $k = 0, \ldots, L-1$.
+
+		
+		Increment counters: for each received tuple $\rbr{h, U_h, \{\ell_h(s_k^h,a_k^h)\}_{k<L} }$ that $h+d^h = t$, 
+		$m_i(s_k^h,a_k^h,s_{k+1}^h) \overset{+}{\leftarrow} 1, \; m_i(s_k^h,a_k^h) \overset{+}{\leftarrow} 1$.\footnote{We use $x \overset{+}{\leftarrow} y$ as a shorthand for the increment operation $x \leftarrow x + y$.}  \\
+		
+		\If(\myComment{entering a new epoch}){$\exists (s,a), \  m_i(s, a) \geq \max\{1, 2m_{i-1}(s,a)\}$}
+		{
+                Increment epoch index $i \overset{+}{\leftarrow} 1$ and set new epoch starting time $t_i = t+1$.  
+		
+		 Initialize new counters: $\forall (s,a,s')$,  
+		$m_i(s,a,s') = m_{i-1}(s,a,s') , m_i(s,a) = m_{i-1}(s,a)$.
+		
+                Update empirical transition $\bar{P}_i$ and confidence width $B_i$ based on \pref{eq:empirical_mean_transition_def} and \pref{eq:confidence_width_def}. 
+}
+	}
+\end{algorithm}
+\end{savenotes}
+
+\paragraph{Special regularizers for \ftrl}
+Due to the new structure of our algorithm which uses a fixed transition $\bar{P}_i$ during epoch $i$, the design of the regularizers is basically the same as in the known transition case.
+Specifically, in the bandit case, we use the same Tsallis entropy regularizer: {\color{magenta}
+\begin{equation}\label{eq:Tsallis}
+\phi_t(q) =  -\sqrt{t - t_{i(t)}+1}\underbrace{\sum_{s \neq s_L} \sum_{a\in A} \sqrt{ q(s,a) } }_{ \text{Tsallis Entropy}  } + \frac{1}{\eta_t} \underbrace{\sum_{s\neq s_L} \sum_{a\in A} q(s,a)\ln q(s,a) }_{ \text{Shannon Entropy}  } + \beta  \underbrace{\sum_{s\neq s_L} \sum_{a\in A} \ln \frac{1}{q(s,a)}}_{ \text{Log Barrier}  },
+\end{equation}
+where $\eta_t = TODO $ and $\beta = 128L^4$.}
+Similarly to~\citep{jin2020simultaneously}, the small amount of log-barrier in the second part of \pref{eq:Tsallis} is used to stabilize the algorithm.
+
+
+\subsection{Main Results}\label{sec:results}
+
+\begin{theorem}\label{thm:main_delayed}
+\end{theorem} 
+
+
+

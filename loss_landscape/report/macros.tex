@@ -1,0 +1,327 @@
+%!TEX root=main.tex
+\newcommand{\theset}[2]{ \left\{ {#1} \,:\, {#2} \right\} }
+\newcommand{\inner}[1]{ \left\langle {#1} \right\rangle }
+\newcommand{\Ind}[1]{ \field{I}{\left\{{#1}\right\}} }
+\newcommand{\ind}{\field{I}}
+\newcommand{\Indt}[1]{ \field{I}_t{\left({#1}\right)} }
+\newcommand{\Indtau}[1]{ \field{I}_\tau{\left({#1}\right)} }
+\newcommand{\eye}[1]{ \boldsymbol{I}_{#1} }
+\newcommand{\norm}[1]{\left\|{#1}\right\|}
+%\newcommand{\trace}[1]{\text{tr}\left({#1}\right)}
+\newcommand{\trace}[1]{\textsc{tr}({#1})}
+\newcommand{\diag}[1]{\mathrm{diag}\!\left\{{#1}\right\}}
+
+\newcommand{\defeq}{\stackrel{\rm def}{=}}
+\newcommand{\sgn}{\mbox{\sc sgn}}
+\newcommand{\scI}{\mathcal{I}}
+\newcommand{\scO}{\mathcal{O}}
+\newcommand{\scN}{\mathcal{N}}
+
+\newcommand{\dt}{\displaystyle}
+\renewcommand{\ss}{\subseteq}
+\newcommand{\wh}[1]{\widehat{#1}}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\hlambda}{\wh{\lambda}}
+\newcommand{\yhat}{\wh{y}}
+\newcommand{\wb}{\overline}
+
+%\newcommand{\gap}{\ensuremath{\mathtt{gap}}}
+\newcommand{\gap}{\Delta}
+\newcommand{\hatl}{\widehat{\ell}}
+\newcommand{\hatL}{\widehat{L}}
+\newcommand{\hatq}{\hat{q}}
+\newcommand{\hatp}{\hat{p}}
+\newcommand{\whatp}{\widehat{p}}
+\newcommand{\whatq}{\widehat{q}}
+
+\newcommand{\whatQ}{\widehat{Q}}
+\newcommand{\whatV}{\widehat{V}}
+
+\newcommand{\wtilQ}{\widetilde{Q}}
+\newcommand{\wtilV}{\widetilde{V}}
+
+\newcommand{\tilq}{\tilde{q}}
+\newcommand{\tilp}{\tilde{p}}
+\newcommand{\clip}{\text{clip}}
+\newcommand{\wtilq}{\widetilde{q}}
+\newcommand{\wtilp}{\widetilde{p}}
+\newcommand{\wtill}{\widetilde{\ell}}
+\newcommand{\selfterm}{\mathbb{G}}
+
+\newcommand{\hDelta}{\wh{\Delta}}
+\newcommand{\hdelta}{\wh{\delta}}
+\newcommand{\spin}{\{-1,+1\}}
+\newcommand{\pbar}{\overline{p}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\theoremstyle{theorem} 
+	\newtheorem{theorem}{Theorem}[subsection]
+	\newtheorem{lemma}[theorem]{Lemma}
+	\newtheorem{observation}[theorem]{Observation}
+	\newtheorem{corollary}[theorem]{Corollary}
+	\newtheorem{proposition}[theorem]{Proposition}
+	\newtheorem{definition}[theorem]{Definition}
+	\newtheorem{remark}[theorem]{Remark}
+	\newtheorem{assumption}{Assumption}
+
+% magic code for numberings 
+\renewcommand{\thetheorem}{%
+	\ifnum\value{subsection}>0 
+	\thesubsection
+	\else
+	\thesection
+	\fi
+	.\arabic{theorem}%
+}
+
+
+\DeclareMathOperator{\val}{val}
+\DeclareMathOperator{\spa}{sp}
+\DeclareMathOperator{\solve}{solve}
+\allowdisplaybreaks
+
+% Packages hyperref and algorithmic misbehave sometimes.  We can fix
+% this with the following command.
+%\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+
+\newcommand{\agmin}[1]{\underset{#1}{\argmin\,} }
+\newcommand{\agmax}[1]{\underset{#1}{\argmax\,} }
+\newcommand{\dotprod}[2]{\langle{#1},{#2}\rangle}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{footnote}
+\usepackage{float}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{nicefrac}
+\usepackage{wrapfig}
+\usepackage{framed}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows,chains,matrix,positioning,scopes}
+
+\newcommand{\push}{\hspace{0pt plus 1 filll} }	
+
+\newcommand{\calA}{{\mathcal{A}}}
+\newcommand{\calB}{{\mathcal{B}}}
+\newcommand{\calC}{{\mathcal{C}}}
+\newcommand{\calH}{{\mathcal{H}}}
+\newcommand{\calL}{{\mathcal{L}}}
+\newcommand{\calU}{{\mathcal{U}}}
+\newcommand{\calX}{{\mathcal{X}}}
+\newcommand{\calY}{{\mathcal{Y}}}
+\newcommand{\calS}{{\mathcal{S}}}
+\newcommand{\calI}{{\mathcal{I}}}
+\newcommand{\calD}{{\mathcal{D}}}
+\newcommand{\calK}{{\mathcal{K}}}
+\newcommand{\calE}{{\mathcal{E}}}
+\newcommand{\calR}{{\mathcal{R}}}
+\newcommand{\calT}{{\mathcal{T}}}
+\newcommand{\calP}{{\mathcal{P}}}
+\newcommand{\calZ}{{\mathcal{Z}}}
+\newcommand{\calM}{{\mathcal{M}}}
+\newcommand{\calN}{{\mathcal{N}}}
+\newcommand{\calF}{{\mathcal{F}}}
+\newcommand{\calV}{{\mathcal{V}}}
+\newcommand{\calQ}{{\mathcal{Q}}}
+\newcommand{\ips}{\wh{r}}
+\newcommand{\whpi}{\wh{\pi}}
+\newcommand{\whE}{\wh{\E}}
+\newcommand{\whV}{\wh{V}}
+\newcommand{\reg}{{\mathcal{R}}}
+\newcommand{\breg}{{\mathcal{\bar{R}}}}
+\newcommand{\hmu}{\wh{\mu}}
+\newcommand{\tmu}{\wt{\mu}}
+\newcommand{\one}{\boldsymbol{1}}
+\newcommand{\loss}{\ell}
+\newcommand{\hloss}{\wh{\ell}}
+\newcommand{\bloss}{\bar{\ell}}
+\newcommand{\tloss}{\wt{\ell}}
+\newcommand{\htheta}{\wh{\theta}}
+
+% special commands 
+\newcommand{\paralog}{\beta}
+\newcommand{\cnt}{B}
+\newcommand{\cons}{J}
+\newcommand{\pcons}{\iota}
+\newcommand{\gapmin}{\Delta_{\textsc{min}}}
+\newcommand{\dmax}{d_{\textsc{max}}}
+\DeclareMathOperator{\polylog}{{\ensuremath{\mathrm{polylog}}}}
+
+\newcommand{\bz}{\boldsymbol{z}}
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bY}{\boldsymbol{Y}}
+\newcommand{\bg}{\boldsymbol{g}}
+\newcommand{\ba}{\boldsymbol{a}}
+\newcommand{\be}{\boldsymbol{e}}
+\newcommand{\bq}{\boldsymbol{q}}
+\newcommand{\bp}{\boldsymbol{p}}
+\newcommand{\bZ}{\boldsymbol{Z}}
+\newcommand{\bS}{\boldsymbol{S}}
+\newcommand{\bw}{\boldsymbol{w}}
+\newcommand{\bW}{\boldsymbol{W}}
+\newcommand{\bU}{\boldsymbol{U}}
+\newcommand{\bv}{\boldsymbol{v}}
+\newcommand{\bzero}{\boldsymbol{0}}
+
+\newcommand{\blue}[1]{{\color{blue}#1}}
+
+\DeclareMathOperator*{\range}{range}
+\DeclareMathOperator*{\mydet}{det_{+}}
+
+\newcommand{\field}[1]{\mathbb{#1}}
+\newcommand{\fY}{\field{Y}}
+\newcommand{\fX}{\field{X}}
+\newcommand{\fH}{\field{H}}
+\newcommand{\fR}{\field{R}}
+\newcommand{\fB}{\field{B}}
+\newcommand{\fS}{\field{S}}
+\newcommand{\fN}{\field{N}}
+\newcommand{\E}{\field{E}}
+\newcommand{\var}{\field{V}}
+\renewcommand{\P}{\field{P}}
+%\newcommand{\inner}[1]{ \left\langle {#1} \right\rangle }
+\newcommand{\RE}{{\text{\rm RE}}}
+\newcommand{\KL}{{\text{\rm KL}}}
+\newcommand{\LCB}{{\text{\rm LCB}}}
+\newcommand{\Reg}{{\text{\rm Reg}}}
+\newcommand{\EReg}{{\text{\rm EstReg}}}
+\newcommand{\Rel}{{\text{\rm Rel}}}
+%\newcommand{\ERM}{{\text{\rm ERM}}\xspace}
+
+\renewcommand{\ss}{\subseteq}
+\newcommand{\wt}{\widetilde}
+\newcommand{\pred}{\yhat}
+\newcommand{\bigand}{\bigwedge\limits}
+
+\newcommand{\normt}[1]{\norm{#1}_{t}}
+\newcommand{\dualnormt}[1]{\norm{#1}_{t,*}}
+
+\newcommand{\order}{\ensuremath{\mathcal{O}}}
+\newcommand{\otil}{\ensuremath{\widetilde{\mathcal{O}}}}
+\newcommand{\risk}{{\text{\rm Risk}}}
+\newcommand{\iid}{{\text{\rm iid}}}
+\newcommand{\seq}{{\text{\rm seq}}}
+\newcommand{\iidV}{\calV^\iid}
+\newcommand{\seqV}{\calV^\seq}
+\newcommand{\poly}{{\text{\rm poly}}}
+\newcommand{\sign}{{\text{\rm sign}}}
+\newcommand{\ERM}{\pred_{{\text{\rm ERM}}}}
+\newcommand{\iidRad}{\calR^{\iid}}
+\newcommand{\iidCRad}{\wh{\calR}^{\iid}}
+\newcommand{\VC}{{\text{\rm VCdim}}}
+\newcommand{\vol}{{\text{\rm Vol}}}
+\newcommand{\Holder}{{H{\"o}lder}\xspace}
+
+\newcommand{\opt}{\mathring{q}}
+\newcommand{\optpi}{\mathring{\pi}}
+
+\newcommand{\uopt}{\mathring{u}}
+\newcommand{\hatu}{\widehat{u}}
+\newcommand{\ring}[1]{\mathring{#1}}
+\newcommand{\und}[1]{\underline{#1}}
+\newcommand{\undr}[1]{\underline{\mathring{#1}}}
+\newcommand{\wgap}{\widehat{\gap}}
+
+\newcommand{\pessP}{\underline{P}}
+
+\newcommand{\myComment}[1]{\null\hfill\scalebox{0.9}{\text{\color{black}$\triangleright$ \textsf{#1}}}}
+
+%%%%  brackets
+\newcommand{\minimax}[1]{\left\llangle #1 \right\rrangle}
+\newcommand{\rbr}[1]{\left(#1\right)}
+\newcommand{\Bigrbr}[1]{\Big(#1\Big)}
+\newcommand{\Biggrbr}[1]{\Bigg(#1\Bigg)}
+\newcommand{\sbr}[1]{\left[#1\right]}
+\newcommand{\Bigsbr}[1]{\Big[#1\Big]}
+\newcommand{\Biggsbr}[1]{\Bigg[#1\Bigg]}
+\newcommand{\cbr}[1]{\left\{#1\right\}}
+\newcommand{\nbr}[1]{\left\|#1\right\|}
+\newcommand{\abr}[1]{\left|#1\right|}
+
+
+\DeclareFontFamily{OMX}{MnSymbolE}{}
+\DeclareFontShape{OMX}{MnSymbolE}{m}{n}{
+    <-6>  MnSymbolE5
+   <6-7>  MnSymbolE6
+   <7-8>  MnSymbolE7
+   <8-9>  MnSymbolE8
+   <9-10> MnSymbolE9
+  <10-12> MnSymbolE10
+  <12->   MnSymbolE12}{}
+\DeclareSymbolFont{mnlargesymbols}{OMX}{MnSymbolE}{m}{n}
+\SetSymbolFont{mnlargesymbols}{bold}{OMX}{MnSymbolE}{b}{n}
+\DeclareMathDelimiter{\llangle}{\mathopen}{mnlargesymbols}{'164}{mnlargesymbols}{'164}
+\DeclareMathDelimiter{\rrangle}{\mathclose}{mnlargesymbols}{'171}{mnlargesymbols}{'171}
+
+\usepackage{prettyref}
+\newcommand{\pref}[1]{\prettyref{#1}}
+\newcommand{\pfref}[1]{Proof of \prettyref{#1}}
+\newcommand{\savehyperref}[2]{\texorpdfstring{\hyperref[#1]{#2}}{#2}}
+\newrefformat{eq}{\savehyperref{#1}{Eq.~\eqref{#1}}}
+\newrefformat{eqn}{\savehyperref{#1}{Equation~\eqref{#1}}}
+\newrefformat{lem}{\savehyperref{#1}{Lemma~\ref*{#1}}}
+\newrefformat{def}{\savehyperref{#1}{Definition~\ref*{#1}}}
+\newrefformat{line}{\savehyperref{#1}{line~\ref*{#1}}}
+\newrefformat{thm}{\savehyperref{#1}{Theorem~\ref*{#1}}}
+\newrefformat{corr}{\savehyperref{#1}{Corollary~\ref*{#1}}}
+\newrefformat{cor}{\savehyperref{#1}{Corollary~\ref*{#1}}}
+\newrefformat{col}{\savehyperref{#1}{Corollary~\ref*{#1}}}
+\newrefformat{sec}{\savehyperref{#1}{Section~\ref*{#1}}}
+\newrefformat{app}{\savehyperref{#1}{Appendix~\ref*{#1}}}
+\newrefformat{assum}{\savehyperref{#1}{Assumption~\ref*{#1}}}
+\newrefformat{ex}{\savehyperref{#1}{Example~\ref*{#1}}}
+\newrefformat{fig}{\savehyperref{#1}{Figure~\ref*{#1}}}
+\newrefformat{alg}{\savehyperref{#1}{Algorithm~\ref*{#1}}}
+\newrefformat{rem}{\savehyperref{#1}{Remark~\ref*{#1}}}
+\newrefformat{conj}{\savehyperref{#1}{Conjecture~\ref*{#1}}}
+\newrefformat{prop}{\savehyperref{#1}{Proposition~\ref*{#1}}}
+\newrefformat{proto}{\savehyperref{#1}{Protocol~\ref*{#1}}}
+\newrefformat{prob}{\savehyperref{#1}{Problem~\ref*{#1}}}
+\newrefformat{claim}{\savehyperref{#1}{Claim~\ref*{#1}}}
+\newrefformat{que}{\savehyperref{#1}{Question~\ref*{#1}}}
+\newrefformat{obs}{\savehyperref{#1}{Observation~\ref*{#1}}}
+
+\newcommand{\regone}{\textsc{Error}}
+\newcommand{\regtwo}{\textsc{Bias}_1}
+\newcommand{\regthree}{\textsc{Reg}}
+
+\newcommand{\rega}{\textsc{BiasN}_1}
+\newcommand{\regb}{\textsc{BiasN}_2}
+\newcommand{\regc}{\textsc{RegN}}  
+\newcommand{\regd}{\textsc{Neg}}  
+
+
+\newcommand{\regfour}{\textsc{Bias}_2}
+\newcommand{\ftrl}{\textsc{FTRL}\xspace}
+
+\newcommand{\err}{\textsc{Error}}
+\newcommand{\martone}{\textsc{MDS}_1}
+\newcommand{\marttwo}{\textsc{MDS}_2}
+
+
+\newcommand{\emin}{m_{\text{in}}} 
+\newcommand{\emprev}{m_{\text{prev}}} 
+\newcommand{\emnext}{m_{\text{next}}} 
+
+\newcommand{\obsL}{\calL^{\text{obs}}}
+\newcommand{\missL}{\calL^{\text{miss}}}
+\newcommand{\cumL}{\calL}
+
+\newcommand{\regm}{\phi_{main}}
+\newcommand{\regs}{\phi_{supp}}
