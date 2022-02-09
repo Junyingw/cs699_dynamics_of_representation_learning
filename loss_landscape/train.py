@@ -53,7 +53,7 @@ def get_dataloader(batch_size, train_size=None, test_size=None,
 		transform = transforms.Compose(
 			[
 				transforms.ColorJitter(brightness=.5, hue=.3),
-				transforms.GaussianBlur(kernel_size=(1, 3), sigma=(0.1, 5)), 
+				transforms.GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 5)), 
 				transforms.RandomHorizontalFlip(), transforms.RandomCrop(32, 4),
 				transforms.ToTensor(), normalize
 			]
