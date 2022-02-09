@@ -50,6 +50,10 @@ if __name__ == '__main__':
         choices=["random", "pca", "frequent_directions"]
     )
 
+    # activation function
+    parser.add_argument("--activation", required=False, choices=["relu", "tanh", "sigmoid", "siren"], default=["relu"])
+
+
     args = parser.parse_args()
 
     # set up logging
@@ -66,9 +70,7 @@ if __name__ == '__main__':
 
     if args.direction_style == "random":
         # get model
-        model = get_resnet(args.model)(
-            num_classes=10, remove_skip_connections=args.remove_skip_connections
-        )
+        model = get_resnet(args.model, activation=args.activation, remove_skip_connections=args.remove_skip_connections)
         model.to(args.device)
         total_params = count_params(model)
         logger.info(f"using {args.model} with {total_params} parameters")
@@ -98,7 +100,7 @@ if __name__ == '__main__':
 
     if args.direction_style == "pca":
         # get model
-        model = get_resnet(args.model)(num_classes=10)
+        model = get_resnet(args.model, activation=args.activation, remove_skip_connections=args.remove_skip_connections)
         model.to("cpu")
         # because here we will be mainly moving data so using cpu should be a better idea
         logger.info(f"using {args.model} with {count_params(model)} parameters")

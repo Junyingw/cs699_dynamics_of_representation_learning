@@ -91,7 +91,7 @@ class ResNet(nn.Module):
         elif activation == "sigmoid":
             self.activation = nn.Sigmoid()
         else:
-            self.activation = Sine(w0=0.5)
+            self.activation = Sine(w0=1.)
 
         self.remove_skip_connections = remove_skip_connections
 

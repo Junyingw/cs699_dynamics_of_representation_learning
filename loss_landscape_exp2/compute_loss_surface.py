@@ -47,6 +47,9 @@ if __name__ == '__main__':
         help="range of y-coordinate, specify as num:min:max"
     )
 
+    # activation function
+    parser.add_argument("--activation", required=False, choices=["relu", "tanh", "sigmoid", "siren"], default=["relu"])
+
     args = parser.parse_args()
 
     # set up logging
@@ -68,9 +71,7 @@ if __name__ == '__main__':
     )
 
     # get model
-    model = get_resnet(args.model)(
-        num_classes=10, remove_skip_connections=args.remove_skip_connections
-    )
+    model = get_resnet(args.model, activation=args.activation, remove_skip_connections=args.remove_skip_connections)
     model.to(args.device)
     total_params = count_params(model)
     logger.info(f"using {args.model} with {total_params} parameters")

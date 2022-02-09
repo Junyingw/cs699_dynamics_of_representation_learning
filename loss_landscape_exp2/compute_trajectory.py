@@ -32,6 +32,9 @@ if __name__ == '__main__':
     parser.add_argument("--direction_file", required=True)
     parser.add_argument("--projection_file", required=True)
 
+    # activation function
+    parser.add_argument("--activation", required=False, choices=["relu", "tanh", "sigmoid", "siren"], default=["relu"])
+
     args = parser.parse_args()
 
     # set up logging
@@ -48,9 +51,7 @@ if __name__ == '__main__':
     set_seed(args.seed)
 
     # get model
-    model = get_resnet(args.model)(
-        num_classes=10, remove_skip_connections=args.remove_skip_connections
-    )
+    model = get_resnet(args.model, activation=args.activation, remove_skip_connections=args.remove_skip_connections)
     model.to("cpu")
     # since we will be mainly moving data so using cpu should be a better idea
     logger.info(f"using {args.model} with {count_params(model)} parameters")
