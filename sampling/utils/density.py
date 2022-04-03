@@ -3,6 +3,7 @@ from typing import Optional
 import jax.numpy
 import numpy
 
+from jax import jit, grad
 
 def gaussian_mixture_energy(coord, means, sigmas, weights):
     """
@@ -50,6 +51,15 @@ def gaussian_mixture_sampler(N, means, sigmas, weights, key):
     std_normal_samples = jax.random.normal(subkey, shape=shape)
     return std_normal_samples * sigmas[modes].reshape(std_normal_samples.shape[0], 1) + means[modes]
 
+def sample_from_normal(N, key):
+    subkey, key = jax.random.split(key)
+    samples = jax.random.normal(subkey, shape=(N,2)) * 100.0 + 350.0 
+    return samples
+
+def sample_from_uniform(N, key):
+    subkey, key = jax.random.split(key)
+    samples = jax.random.normal(subkey, shape=(N,2)) * 50.0 + 350.0 
+    return samples
 
 def sample_from_image_density(N, density, key):
     """
@@ -72,10 +82,11 @@ def sample_from_image_density(N, density, key):
     bins = jax.numpy.stack([indices // (density.shape[0]), indices % (density.shape[0])], axis=1)
     subkey, key = jax.random.split(key)
     samples = bins + jax.random.uniform(subkey, shape=bins.shape) - 0.5
+
     return samples
 
-
-def continuous_energy_from_image(coord, xp, yp, zp, fill_value=None):
+@jit
+def continuous_energy_from_image(coord, xp, yp, zp, fill_value=10):
     """
 
     :param coord:
@@ -87,6 +98,18 @@ def continuous_energy_from_image(coord, xp, yp, zp, fill_value=None):
     """
     return -jax.numpy.log(interp2d(coord[0], coord[1], xp, yp, zp, fill_value))
 
+@jit
+def continuous_energy_from_image_ext(coord, xp, yp, zp, fill_value=10):
+    """
+
+    :param coord:
+    :param xp: see interp2d
+    :param yp: see interp2d
+    :param zp: see interp2d
+    :param fill_value: see interp2d (Note: you can this to enforce some trivial boundary conditions
+    :return: energy (based on bilinear interpolation of zp on xp, yp grid. )
+    """
+    return -jax.numpy.log(interp2d(coord[:,0], coord[:,1], xp, yp, zp, fill_value))
 
 def interp2d(
         x: jax.numpy.ndarray,
@@ -188,7 +211,7 @@ def prepare_image(rgb, crop=None, embed=None, white_cutoff=225, gauss_sigma=3, b
     background1 = gaussian_filter(img, sigma=10)
     background2 = gaussian_filter(img, sigma=20)
     background3 = gaussian_filter(img, sigma=50)
-    density = (1.0 - img2) + background * (background1 + background2 + background3)
+    density = (1.0 - img2) + background  * (background1 + background2 + background3)
 
     U = -numpy.log(density)
     U -= U.min()
