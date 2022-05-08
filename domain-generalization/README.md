@@ -1,5 +1,5 @@
 # CSCI 699 Project 3: Data Shift & Task Dynamics
-In this project we explored two novel approaches of domain adaptiona and domain generation.<br/>
+In this project we explored two novel approaches of domain adaptiona and domain generalization.<br/>
 The references papaers are:<br/>
 [Adversarial Discriminative Domain Adaptation (ADDA)](https://arxiv.org/pdf/1702.05464.pdf)<br/>
 [Invariant Risk Minimization (IRM)](https://arxiv.org/abs/1907.02893)<br/>
